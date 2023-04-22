@@ -1,0 +1,7 @@
+body {
+    background-color: wheat;
+    border: black 5px
+}
+table { border: 2px solid;}
+td { color: black; background-color: white; text-align: center;}
+

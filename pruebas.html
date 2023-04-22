@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="styles.css">
+
+<html>
+    <h1 id="fila1"></h2>
+    <h2 id="fila2"></h2>
+    <h2 id="fila3"></h2>
+
+</html>
+
+<script>
+
+    function colocaString(miFicha, fontRelativo, leftRelativo, topRelativo) {
+        var alturaPantalla = window.innerHeight;
+        var anchuraPantalla = window.innerWidth;
+        area = alturaPantalla * anchuraPantalla;
+        fontFicha = anchuraPantalla * fontRelativo;    //  Math.sqrt(area) * fontRelativo;
+        // var span = document.getElementById("fila1");
+        var span = document.createElement('span');
+        // console.log(span);
+        span.style.fontSize = fontFicha + "px";
+        span.style.position = 'absolute';
+        span.style.left = anchuraPantalla*leftRelativo + "px";
+        span.style.top = alturaPantalla*topRelativo + "px";
+        span.innerHTML = miFicha;  //Asignar valor
+        document.body.insertBefore(span, document.body.firstChild);
+    }  // cierra la función colocaFicha
+
+    function hallaStringFicha(fichaTexto, posicion) {
+        // el primer num es izquierda o arriba según sea "h" o "v" la posición
+        numIzquierda = parseInt(fichaTexto.substr(0, 1));
+        numDerecha = Number(fichaTexto.substr(2, 1));
+        inicio = 127025;
+        if (posicion === "v") inicio = 127075;
+        return "&#" + (inicio + numIzquierda*7 + numDerecha);
+    }   // cierra la función hallaStringFicha
+
+    function creaStringFichas(listaFichas, orientacion) {
+        // parte de una lista de fichas y crea su string orientado "v" vertical o "h" horizontal
+        resultado = "";
+        for (const laFicha of listaFichas) {
+            resultado = resultado + hallaStringFicha(laFicha, orientacion);
+        }  // cierra el for de laFicha
+        return resultado;
+    }   // cierra la funcion creaStringFichas
+
+    function pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, salida) {
+
+        colocaString("salida", fontRelativo/3, 1/2.22, 0.44)
+
+        // presentamos las fichas de los jugadores
+        colocaString("norte: ", fontRelativo/2, 1/2.5, 0.13);
+        colocaString(creaStringFichas(fichasNorte, "v"), fontRelativo, 1/2.2, 0.1);
+        colocaString("sur: ", fontRelativo/2, 1/2.5, 0.83);
+        colocaString(creaStringFichas(fichasSur, "v"), fontRelativo, 1/2.2, 0.8);
+        colocaString("este: ", fontRelativo/2, 0.92, 0.3);
+        for (i=0; i<fichasEste.length; i++) colocaString(hallaStringFicha(fichasEste[i], "h"), fontRelativo, 0.925, 0.32 + i*.05);
+        colocaString("oeste: ", fontRelativo/2, 0.025, 0.3);
+        for (i=0; i<fichasOeste.length; i++) colocaString(hallaStringFicha(fichasOeste[i], "h"), fontRelativo, 0.025, 0.32 + i*.05);
+
+        // ahora la serpiente
+        posSalida = fichasSerpiente.indexOf(salida);
+        // empezamos por la derecha a partir de la salida
+        ubicacionX = 1/2.2; // inicio de la ubicación de las fichas
+        posIndice = posSalida;
+        largoDerecha = fichasSerpiente.length - posSalida;
+
+        do {
+            laFicha = fichasSerpiente[posIndice];
+            if (laFicha[0] === laFicha[2]) {
+                posicion = "v";
+                ubicacionX -= .007;
+            }  // cierra el if de laFicha[0]
+            else posicion = "h";
+            fichaVisual = hallaStringFicha(fichasSerpiente[posIndice], posicion);
+            colocaString(fichaVisual, fontRelativo, ubicacionX, 0.45);
+            posIndice += 1;
+            if (posicion === "h") ubicacionX += .03;
+            else ubicacionX += .023;
+        } while ((ubicacionX < 0.82) && (posIndice < largoDerecha));
+
+        document.getElementById("fila1").innerHTML = ubicacionX;
+        document.getElementById("fila2").innerHTML = posIndice;
+        document.getElementById("fila3").innerHTML = posSalida;
+
+    }   // cierra la funcion pintaLaPantalla
+
+    // este sería el conjunto de inputs
+    fichasNorte = ["5/4", "4/3", "3/2", "2/2", "2/1"];
+    fichasSur = ["5/5", "2/3", "5/2", "1/1", "2/6"];
+    fichasEste = ["1/4", "3/3", "4/2", "5/5", "0/0"];
+    fichasOeste = ["0/4", "4/0", "0/2", "0/6", "4/1"];
+    fichasSerpiente = ["5/4", "4/3", "3/2", "2/2", "2/1", "5/4", "4/3", "3/2", "2/2", "2/1", "4/3", "3/2", "2/2", "2/1", "5/4"
+    , "2/2", "2/1", "5/4", "4/3"];
+    salida = "2/2";
+
+    // ayuda visual
+    // document.getElementById("fila1").innerHTML = salida[0];
+
+    // tamaño relativo de los caracteres
+    fontRelativo = 1/30;
+
+    pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, salida);
+
+    window.onresize = function(){ window.location.reload(true); }
+
+</script>
