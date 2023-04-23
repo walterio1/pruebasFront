@@ -71,7 +71,7 @@
         ubicacionY = 0.45;  
         posIndice = posSalida;
 
-        do {
+        do {  // serán las fichas desde la salida hacia la derecha
             laFicha = fichasSerpiente[posIndice];
             if (laFicha[0] === laFicha[2]) {
                 posicion = "v";
@@ -114,7 +114,7 @@
                 ubicacionY -= .032;
                 fichaVisual = hallaStringFicha(laFicha, "h");
                 colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY -= .023;
+                ubicacionY -= .036;
             }  // cierra el if de laFicha[0]
             else {   // es una mixta
                 posicion = "v"; 
@@ -122,9 +122,39 @@
                 ubicacionX += .00;
                 fichaVisual = hallaStringFicha(laFicha, "v");
                 colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY -= .023;
+                ubicacionY -= .054;
             }   // cierra el else
+            ubicacionX += 0.0525;
+            posIndice += 1;
         }   // cierre del if posIndice
+
+        // si la 1ª de la derecha a izquierda es un doble hay que ajustar x, y
+        if (fichasSerpiente[posIndice][0] === fichasSerpiente[posIndice][2]) {
+            ubicacionX -= .015;
+            ubicacionY += .033;
+        }    // cierra el if de fichaSerpiente
+
+        do {   // serán las fichas desde el extremo derecho hacia la izquierda
+            laFicha = giraFicha(fichasSerpiente[posIndice]);
+            if (laFicha[0] === laFicha[2]) {
+                posicion = "v";
+                ubicacionX -= .053;
+                fichaVisual = hallaStringFicha(laFicha, posicion);
+                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
+                ubicacionX += .014;
+
+            }  // cierra el if de laFicha[0]
+            else {
+                posicion = "h";
+                ubicacionX -= .060;
+                fichaVisual = hallaStringFicha(laFicha, posicion);
+                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
+            }   // cierra el else
+            
+            posIndice += 1;
+            if (posicion === "h") ubicacionX += .03;
+            else ubicacionX += .023;
+        } while (posIndice < fichasSerpiente.length);
        
         document.getElementById("fila1").innerHTML = fichasSerpiente.length;
         document.getElementById("fila2").innerHTML = posIndice;
@@ -138,7 +168,8 @@
     fichasEste = ["1/4", "3/3", "4/2", "5/5", "0/0"];
     fichasOeste = ["0/4", "4/0", "0/2", "0/6", "4/1"];
     fichasSerpiente = ["5/4", "4/3", "3/2", "2/2", "2/1", "1/4", "4/3", "3/2", "2/1", "1/6", 
-    "6/2", "2/5", "5/4", "4/4", "4/1", "1/1", "1/3", "3/5", "5/5", "5/1"];
+    "6/2", "2/5", "5/4", "4/1", "1/1", "1/3", "3/5", "5/1", "1/3", "3/3", "3/4", "4/5", 
+    "5/5", "5/3"];
     salida = "2/2";
 
     // ayuda visual
