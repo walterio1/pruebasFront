@@ -45,6 +45,11 @@
         return resultado;
     }   // cierra la funcion creaStringFichas
 
+    function giraFicha(fichaTexto) {
+        // cambia de lado la ficha (ej: el "2/3" pasa a ser "3/2")
+        return "" + fichaTexto.substr(2, 1) + "/" + fichaTexto.substr(0, 1);
+    }   // cierra la función giraFicha
+
     function pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, salida) {
 
         colocaString("salida", fontRelativo/3, 1/2.22, 0.44)
@@ -63,8 +68,11 @@
         posSalida = fichasSerpiente.indexOf(salida);
         // empezamos por la derecha a partir de la salida
         ubicacionX = 1/2.2; // inicio de la ubicación de las fichas
+        ubicacionY = 0.45;  
         posIndice = posSalida;
 
+        // este do pintará las fichas de centro hacia la derecha
+        limiteDerecho = 0.82;    // el 85% de la pantalla
         do {
             laFicha = fichasSerpiente[posIndice];
             if (laFicha[0] === laFicha[2]) {
@@ -73,15 +81,74 @@
             }  // cierra el if de laFicha[0]
             else posicion = "h";
             fichaVisual = hallaStringFicha(fichasSerpiente[posIndice], posicion);
-            colocaString(fichaVisual, fontRelativo, ubicacionX, 0.45);
+            colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
             posIndice += 1;
             if (posicion === "h") ubicacionX += .03;
             else ubicacionX += .023;
-        } while ((ubicacionX < 0.82) && (posIndice < fichasSerpiente.length));
+            // ahora establezco las condiciones para que siga hacia la derecha
+            cond1 = ubicacionX < limiteDerecho;
+            cond2 = posIndice < fichasSerpiente.length;
+        } while (cond1 && cond2);
 
-        document.getElementById("fila1").innerHTML = ubicacionX;
-        document.getElementById("fila2").innerHTML = posIndice;
-        document.getElementById("fila3").innerHTML = posSalida;
+        /*
+        // si aún queda una o más fichas, primera ficha ascendente de la vertical
+        if (posIndice < fichasSerpiente.length) {  //  aún queda una o más fichas
+            laFicha = giraFicha(fichasSerpiente[posIndice]);
+            if (laFicha[0] === laFicha[2]) {   // es un doble
+                ubicacionX -= .022;
+                ubicacionY -= .028;
+                fichaVisual = hallaStringFicha(laFicha, "h");
+                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
+                ubicacionY += .013;
+            }  // cierra el if de laFicha[0]
+            else {   // es una mixta
+                posicion = "v"; 
+                ubicacionY -= .013;
+                ubicacionX -= .007;
+                fichaVisual = hallaStringFicha(laFicha, "v");
+                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
+            }   // cierra el else
+        }   // cierre del if posIndice
+
+        posIndice += 1;
+        //segunda ficha ascendente de la vertical
+        if (posIndice < fichasSerpiente.length) {  //  aún queda una o más fichas   
+            laFicha = giraFicha(fichasSerpiente[posIndice]);
+            if (laFicha[0] === laFicha[2]) {   // es un doble
+                ubicacionX -= .0;
+                ubicacionY -= .042;
+                fichaVisual = hallaStringFicha(laFicha, "h");
+            }  // cierra el if de laFicha[0]
+            else {   // es una mixta
+                posicion = "v"; 
+                ubicacionY -= .054;
+                ubicacionX += .00;
+                fichaVisual = hallaStringFicha(laFicha, "v");
+            }   // cierra el else
+        }   // cierre del if posIndice
+      
+        posIndice += 1;
+        colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);  
+        */
+/*
+        final = Math.min(posIndice + 3, fichasSerpiente.length);
+        for (i=posIndice; i<final; i++) {
+            laFicha = fichasSerpiente[i];
+            if (laFicha[0] === laFicha[2]) {
+                posicion = "h";
+                ubicacionX -= .007;
+            }  // cierra el if de laFicha[0]
+            else posicion = "v";
+            
+            if (posicion === "v") ubicacionY += .023;
+            else ubicacionY += .03;
+            
+        }   // cierra el for de i
+*/
+
+        document.getElementById("fila1").innerHTML = condBreak;
+        document.getElementById("fila2").innerHTML = giraFicha("5/4");
+        document.getElementById("fila3").innerHTML = fichaVisual;
 
     }   // cierra la funcion pintaLaPantalla
 
@@ -90,10 +157,18 @@
     fichasSur = ["5/5", "2/3", "5/2", "1/1", "2/6"];
     fichasEste = ["1/4", "3/3", "4/2", "5/5", "0/0"];
     fichasOeste = ["0/4", "4/0", "0/2", "0/6", "4/1"];
-    fichasSerpiente = ["5/4", "4/3", "3/2", "2/2", "2/1", "1/4"]; 
-    // "4/3", "3/2", "2/1", "1/3", 
-    // "3/2", "2/5", "5/4", "4/1", "1/1", "1/3"];
+    fichasSerpiente = ["2/2"];
     salida = "2/2";
+    /*
+    ["5/4", "4/3", "3/2",  
+    "2/2", "2/1", "1/4", "4/2", "2/1", "1/5", "5/3", "3/2", "2/0", "0/0", "0/3", "3/3", "3/1", 
+    "1/4", "4/4", "4/6", "6/0", "0/3", "3/4"];
+    
+    */
+
+        //////////////////////////////////////
+    // tendriamos que poder enviar a prueba.py un string "hola" y que (si es "hola") conteste "saludos"
+        /////////////////////////////////////
 
     // ayuda visual
     // document.getElementById("fila1").innerHTML = salida[0];
