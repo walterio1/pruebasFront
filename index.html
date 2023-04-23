@@ -63,6 +63,7 @@
         posSalida = fichasSerpiente.indexOf(salida);
         // empezamos por la derecha a partir de la salida
         ubicacionX = 1/2.2; // inicio de la ubicación de las fichas
+        ubicacionY = 0.45;  
         posIndice = posSalida;
 
         do {
@@ -73,7 +74,7 @@
             }  // cierra el if de laFicha[0]
             else posicion = "h";
             fichaVisual = hallaStringFicha(fichasSerpiente[posIndice], posicion);
-            colocaString(fichaVisual, fontRelativo, ubicacionX, 0.45);
+            colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
             posIndice += 1;
             if (posicion === "h") ubicacionX += .03;
             else ubicacionX += .023;
