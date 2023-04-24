@@ -11,8 +11,10 @@
 
 <script>
 
-    //  global con el tamaño relativo de los caracteres
-    fontRelativo = 1/20;
+    let alturaPantalla = window.innerHeight;
+    let anchuraPantalla = window.innerWidth;
+    let ratio = alturaPantalla / anchuraPantalla * (1536/664);
+    let fontRelativo = ratio / 25;
 
     function colocaString(miFicha, fontRelativo, leftRelativo, topRelativo) {
         var alturaPantalla = window.innerHeight;
@@ -53,24 +55,31 @@
         return "" + fichaTexto.substr(2, 1) + "/" + fichaTexto.substr(0, 1);
     }   // cierra la función giraFicha
 
-    function pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, salida) {
+    function pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, 
+        salida, fontRelativo) {
 
-        colocaString("salida", fontRelativo/3, .44, 0.44)
+        colocaString("salida", fontRelativo/3, .475, 0.44)
 
         // presentamos las fichas de los jugadores
-        colocaString("norte: ", fontRelativo/2, 1/2.5, 0.1);
-        colocaString(creaStringFichas(fichasNorte, "v"), fontRelativo, 1/2.2, 0.06);
-        colocaString("sur: ", fontRelativo/2, 1/2.5, 0.83);
-        colocaString(creaStringFichas(fichasSur, "v"), fontRelativo, 1/2.2, 0.8);
-        colocaString("este: ", fontRelativo/2, 0.92, 0.3);
-        for (i=0; i<fichasEste.length; i++) colocaString(hallaStringFicha(fichasEste[i], "h"), fontRelativo, 0.925, 0.32 + i*.05*30*fontRelativo);
-        colocaString("oeste: ", fontRelativo/2, 0.025, 0.3);
-        for (i=0; i<fichasOeste.length; i++) colocaString(hallaStringFicha(fichasOeste[i], "h"), fontRelativo, 0.025, 0.32 + i*.05*30*fontRelativo);
+        colocaString("norte: ", fontRelativo/2, 1/2.5, 0.04);
+        colocaString(creaStringFichas(fichasNorte, "v"), fontRelativo, 1/2.2, 0.0);
+        colocaString("sur: ", fontRelativo/2, 1/2.5, 0.90);
+        colocaString(creaStringFichas(fichasSur, "v"), fontRelativo, 1/2.2, 0.87);
+        colocaString("este: ", fontRelativo/2, 0.94, 0.3);
+        for (i=0; i<fichasEste.length; i++) {
+            colocaString(hallaStringFicha(fichasEste[i], "h"), 
+                fontRelativo, 0.945, 0.32 + i*1.5*fontRelativo/ratio);
+        }   // cierra el for de fichasEste
+        colocaString("oeste: ", fontRelativo/2, 0.01, 0.3);
+        for (i=0; i<fichasOeste.length; i++) {
+            colocaString(hallaStringFicha(fichasOeste[i], "h"), 
+                fontRelativo, 0.01, 0.32 + i*.05*30*fontRelativo/ratio);
+        } // cierra el for de fichasOeste
 
         // ahora la serpiente
         posSalida = fichasSerpiente.indexOf(salida);
         // empezamos por la derecha a partir de la salida
-        ubicacionX = 0.45; // inicio de la ubicación de las fichas
+        ubicacionX = 0.48; // inicio de la ubicación de las fichas
         ubicacionY = 0.45;  
         posIndice = posSalida;
 
@@ -86,11 +95,9 @@
             posIndice += 1;
             if (posicion === "h") ubicacionX += .03*30*fontRelativo;
             else ubicacionX += .7*fontRelativo;
-        } while ((ubicacionX < 0.82) && (posIndice < fichasSerpiente.length));
+        } while ((ubicacionX < 0.86) && (posIndice < fichasSerpiente.length));
 
-        var alturaPantalla = window.innerHeight;
-        var anchuraPantalla = window.innerWidth;
-        ratio = alturaPantalla / anchuraPantalla * (1536/664);
+        
 
         // pintamos la 1ª ficha que sube a la derecha
        if (posIndice < fichasSerpiente.length) {  //  aún queda una o más fichas 
@@ -135,37 +142,40 @@
             posIndice += 1;
         }   // cierre del if posIndice
 
-        // si la 1ª de la derecha a izquierda es un doble hay que ajustar x, y
-        if (fichasSerpiente[posIndice][0] === fichasSerpiente[posIndice][2]) {
-            ubicacionX -= .45*fontRelativo;
-            ubicacionY += 1.1*fontRelativo/ratio;
-        }    // cierra el if de fichaSerpiente
+        if (posIndice < fichasSerpiente.length) {  //  aún queda una o más fichas
 
-        do {   // serán las fichas desde el extremo derecho hacia la izquierda
-            laFicha = giraFicha(fichasSerpiente[posIndice]);
-            if (laFicha[0] === laFicha[2]) {
-                posicion = "v";
-                ubicacionX -= .053*30*fontRelativo;
-                fichaVisual = hallaStringFicha(laFicha, posicion);
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionX += .014*30*fontRelativo;
+            // si la 1ª de la derecha a izquierda es un doble hay que ajustar x, y
+            if (fichasSerpiente[posIndice][0] === fichasSerpiente[posIndice][2]) {
+                ubicacionX -= .45*fontRelativo;
+                ubicacionY += 1.1*fontRelativo/ratio;
+            }    // cierra el if de fichaSerpiente
 
-            }  // cierra el if de laFicha[0]
-            else {
-                posicion = "h";
-                ubicacionX -= .060*30*fontRelativo;
-                fichaVisual = hallaStringFicha(laFicha, posicion);
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-            }   // cierra el else
-            
-            posIndice += 1;
-            if (posicion === "h") ubicacionX += .03*30*fontRelativo;
-            else ubicacionX += .023*30*fontRelativo;
-        } while (posIndice < fichasSerpiente.length);
-       
-        document.getElementById("fila1").innerHTML = fichasSerpiente.length;
+            do {   // serán las fichas desde el extremo derecho hacia la izquierda
+                laFicha = giraFicha(fichasSerpiente[posIndice]);
+                if (laFicha[0] === laFicha[2]) {
+                    posicion = "v";
+                    ubicacionX -= .053*30*fontRelativo;
+                    fichaVisual = hallaStringFicha(laFicha, posicion);
+                    colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
+                    ubicacionX += .014*30*fontRelativo;
+
+                }  // cierra el if de laFicha[0]
+                else {
+                    posicion = "h";
+                    ubicacionX -= .060*30*fontRelativo;
+                    fichaVisual = hallaStringFicha(laFicha, posicion);
+                    colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
+                }   // cierra el else
+                
+                posIndice += 1;
+                if (posicion === "h") ubicacionX += .03*30*fontRelativo;
+                else ubicacionX += .023*30*fontRelativo;
+            } while (posIndice < fichasSerpiente.length);
+        }   //  cierre del if posIndice
+        
+        document.getElementById("fila1").innerHTML = ratio;
         document.getElementById("fila2").innerHTML = alturaPantalla;
-        document.getElementById("fila3").innerHTML = anchuraPantalla;
+        document.getElementById("fila3").innerHTML = fontRelativo;
 
     }   // cierra la funcion pintaLaPantalla
 
@@ -175,12 +185,15 @@
     fichasEste = ["1/4", "3/3", "4/2", "5/5", "0/0"];
     fichasOeste = ["0/4", "4/0", "0/2", "0/6", "4/1"];
     fichasSerpiente = ["5/4", "4/3", "3/2", "2/2", "2/1", "1/4", "4/3", "3/2", "2/1", "1/6", 
-    "6/6", "6/2", "2/5", "5/5", "5/4", 
-    "4/1", "1/3", "3/5", "5/1", "1/3", "3/3", "3/4", "4/5"];
+    "6/6", "6/2", "2/5", "5/5", "5/4", "5/2", "5/2", "5/2", "5/2", "5/2", 
+    "4/1", "1/3", "3/5", "5/1", "1/3", "3/3", "3/4", "4/5", "5/2", "5/2", "5/2", "5/2", "5/2", "5/2"];
     salida = "2/2";
 
-    pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, salida);
+    pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, 
+        salida, fontRelativo);
 
-    window.onresize = function(){ window.location.reload(true); }
+    window.onresize = function(){ 
+        window.location.reload(true); 
+    }
 
 </script>
