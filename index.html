@@ -3,57 +3,27 @@
 <link rel="stylesheet" href="styles.css">
 
 <html>
-    <h1 id="fila1"></h2>
-    <h2 id="fila2"></h2>
-    <h2 id="fila3"></h2>
+    <head>
+        woka
+    </head>
+    <body>
+        
+        <h1 id="fila1"></h2>
+        <h2 id="fila2"></h2>
+        <h2 id="fila3"></h2>
+    </body>
+    
+
 
 </html>
 
+<script src="src/funciones1.js"></script>
 <script>
 
     let alturaPantalla = window.innerHeight;
     let anchuraPantalla = window.innerWidth;
     let ratio = alturaPantalla / anchuraPantalla * (1536/664);
     let fontRelativo = ratio / 25;
-
-    function colocaString(miFicha, fontRelativo, leftRelativo, topRelativo) {
-        var alturaPantalla = window.innerHeight;
-        var anchuraPantalla = window.innerWidth;
-        area = alturaPantalla * anchuraPantalla;
-        fontFicha = anchuraPantalla * fontRelativo;    //  Math.sqrt(area) * fontRelativo;
-        // var span = document.getElementById("fila1");
-        var span = document.createElement('span');
-        // console.log(span);
-        span.style.fontSize = fontFicha + "px";
-        span.style.position = 'absolute';
-        span.style.left = anchuraPantalla*leftRelativo + "px";
-        span.style.top = alturaPantalla*topRelativo + "px";
-        span.innerHTML = miFicha;  //Asignar valor
-        document.body.insertBefore(span, document.body.firstChild);
-    }  // cierra la función colocaFicha
-
-    function hallaStringFicha(fichaTexto, posicion) {
-        // el primer num es izquierda o arriba según sea "h" o "v" la posición
-        numIzquierda = parseInt(fichaTexto.substr(0, 1));
-        numDerecha = Number(fichaTexto.substr(2, 1));
-        inicio = 127025;
-        if (posicion === "v") inicio = 127075;
-        return "&#" + (inicio + numIzquierda*7 + numDerecha);
-    }   // cierra la función hallaStringFicha
-
-    function creaStringFichas(listaFichas, orientacion) {
-        // parte de una lista de fichas y crea su string orientado "v" vertical o "h" horizontal
-        resultado = "";
-        for (const laFicha of listaFichas) {
-            resultado = resultado + hallaStringFicha(laFicha, orientacion);
-        }  // cierra el for de laFicha
-        return resultado;
-    }   // cierra la funcion creaStringFichas
-
-    function giraFicha(fichaTexto) {
-        // cambia de lado la ficha (ej: el "2/3" pasa a ser "3/2")
-        return "" + fichaTexto.substr(2, 1) + "/" + fichaTexto.substr(0, 1);
-    }   // cierra la función giraFicha
 
     function pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, 
         salida, fontRelativo) {
@@ -83,21 +53,9 @@
         ubicacionY = 0.45;  
         posIndice = posSalida;
 
-        do {  // serán las fichas desde la salida hacia la derecha
-            laFicha = fichasSerpiente[posIndice];
-            if (laFicha[0] === laFicha[2]) {
-                posicion = "v";
-                ubicacionX -= .21*fontRelativo;
-            }  // cierra el if de laFicha[0]
-            else posicion = "h";
-            fichaVisual = hallaStringFicha(fichasSerpiente[posIndice], posicion);
-            colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-            posIndice += 1;
-            if (posicion === "h") ubicacionX += .03*30*fontRelativo;
-            else ubicacionX += .7*fontRelativo;
-        } while ((ubicacionX < 0.86) && (posIndice < fichasSerpiente.length));
-
-        
+        resultado = pintaFichasDerecha(fichasSerpiente, posIndice, ubicacionX, fontRelativo);
+        posIndice = resultado[0];
+        ubicacionX = resultado[1];
 
         // pintamos la 1ª ficha que sube a la derecha
        if (posIndice < fichasSerpiente.length) {  //  aún queda una o más fichas 
@@ -154,22 +112,21 @@
                 laFicha = giraFicha(fichasSerpiente[posIndice]);
                 if (laFicha[0] === laFicha[2]) {
                     posicion = "v";
-                    ubicacionX -= .053*30*fontRelativo;
+                    ubicacionX -= 1.59*fontRelativo;
                     fichaVisual = hallaStringFicha(laFicha, posicion);
                     colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
                     ubicacionX += .014*30*fontRelativo;
-
                 }  // cierra el if de laFicha[0]
                 else {
                     posicion = "h";
-                    ubicacionX -= .060*30*fontRelativo;
+                    ubicacionX -= 1.8*fontRelativo;
                     fichaVisual = hallaStringFicha(laFicha, posicion);
                     colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
                 }   // cierra el else
                 
                 posIndice += 1;
                 if (posicion === "h") ubicacionX += .03*30*fontRelativo;
-                else ubicacionX += .023*30*fontRelativo;
+                else ubicacionX += .69*fontRelativo;
             } while (posIndice < fichasSerpiente.length);
         }   //  cierre del if posIndice
         
