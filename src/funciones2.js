@@ -1,0 +1,1 @@
+// funciones de javascript que pintan la pantalla

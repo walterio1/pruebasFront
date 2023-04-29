@@ -39,7 +39,7 @@ function giraFicha(fichaTexto) {
     return "" + fichaTexto.substr(2, 1) + "/" + fichaTexto.substr(0, 1);
 }   // cierra la función giraFicha
 
-function pintaFichasDerecha(fichasSerpiente, posIndice, ubicacionX, fontRelativo) {
+function pintaFichasDerecha(fichasSerpiente, posIndice, ubicacionX, ubicacionY, fontRelativo) {
     // pintará las fichas a la derecha de la actual
     do {  // serán las fichas desde la salida hacia la derecha
         laFicha = fichasSerpiente[posIndice];
@@ -53,7 +53,33 @@ function pintaFichasDerecha(fichasSerpiente, posIndice, ubicacionX, fontRelativo
         posIndice += 1;
         if (posicion === "h") ubicacionX += .9*fontRelativo;
         else ubicacionX += .7*fontRelativo;
-    } while ((ubicacionX < 0.86) && (posIndice < fichasSerpiente.length));
+    } while ((ubicacionX < 0.82) && (posIndice < fichasSerpiente.length));
     return [posIndice, ubicacionX];
 }   // cierra la función pintaFichaDerecha
+
+function pintaFichasIzquierda(fichasSerpiente, posIndice, ubicacionX, ubicacionY, fontRelativo, giro) {
+    // pintará las fichas a la izquerda de la actual
+    do {   // serán las fichas desde el extremo derecho hacia la izquierda
+        laFicha = fichasSerpiente[posIndice];
+        if (giro) laFicha = giraFicha(laFicha);
+        if (laFicha[0] === laFicha[2]) {
+            posicion = "v";
+            ubicacionX -= 1.59*fontRelativo;
+            fichaVisual = hallaStringFicha(laFicha, posicion);
+            colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
+            ubicacionX += .42*fontRelativo;
+        }  // cierra el if de laFicha[0]
+        else {
+            posicion = "h";
+            ubicacionX -= 1.8*fontRelativo;
+            fichaVisual = hallaStringFicha(laFicha, posicion);
+            colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
+        }   // cierra el else
+        posIndice += 1;
+        if (posicion === "h") ubicacionX += .03*30*fontRelativo;
+        else ubicacionX += .69*fontRelativo;
+    } while ((ubicacionX > 0.27) && (posIndice < fichasSerpiente.length));
+    return [posIndice, ubicacionX];
+}   // cierra la función pintaFichasIzquierda
+    
     
