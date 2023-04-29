@@ -39,20 +39,23 @@ function giraFicha(fichaTexto) {
     return "" + fichaTexto.substr(2, 1) + "/" + fichaTexto.substr(0, 1);
 }   // cierra la función giraFicha
 
-function pintaFichasDerecha(fichasSerpiente, posIndice, ubicacionX, ubicacionY, fontRelativo) {
+function pintaFichasDerecha(fichasSerpiente, posIndice, ubicacionX, ubicacionY, fontRelativo, giro) {
     // pintará las fichas a la derecha de la actual
     do {  // serán las fichas desde la salida hacia la derecha
         laFicha = fichasSerpiente[posIndice];
+        if (giro) laFicha = giraFicha(laFicha);
         if (laFicha[0] === laFicha[2]) {
             posicion = "v";
             ubicacionX -= .21*fontRelativo;
         }  // cierra el if de laFicha[0]
         else posicion = "h";
-        fichaVisual = hallaStringFicha(fichasSerpiente[posIndice], posicion);
+        fichaVisual = hallaStringFicha(laFicha, posicion);
         colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
         posIndice += 1;
         if (posicion === "h") ubicacionX += .9*fontRelativo;
         else ubicacionX += .7*fontRelativo;
+        if (giro) console.log(laFicha);
+
     } while ((ubicacionX < 0.82) && (posIndice < fichasSerpiente.length));
     return [posIndice, ubicacionX];
 }   // cierra la función pintaFichaDerecha
