@@ -4,7 +4,7 @@
 
 <html>
     <head>
-        woka
+        woka - dominó por parejas
     </head>
     <body>
         
@@ -15,6 +15,7 @@
 </html>
 
 <script src="src/funciones1.js"></script>
+<script src="src/funciones2.js"></script>
 <script>
 
     let alturaPantalla = window.innerHeight;
@@ -25,11 +26,10 @@
     function pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, 
         salida, fontRelativo) {
 
-        colocaString("salida", fontRelativo/4, .48, 0.44);
-        colocaString(salidor, fontRelativo/4, .48, 0.46);
+        colocaString("salida", fontRelativo/4, .48, 0.45);
+        colocaString(salidor, fontRelativo/4, .48, 0.47);
 
-
-        // presentamos las fichas de los jugadores
+        // dibujamos las fichas de los jugadores
         colocaString("norte: ", fontRelativo/2, 1/2.6, 0.04);
         colocaString(creaStringFichas(fichasNorte, "v"), fontRelativo, 1/2.2, 0.0);
         colocaString("sur: ", fontRelativo/2, 1/2.5, 0.90);
@@ -45,62 +45,34 @@
                 fontRelativo, 0.03, 0.32 + i*.05*30*fontRelativo/ratio);
         } // cierra el for de fichasOeste
 
-        // ahora la serpiente
+        // ahora dibujamos la serpiente
         posSalida = fichasSerpiente.indexOf(salida);
-        // empezamos por la derecha a partir de la salida
-        ubicacionX = 0.48; // inicio de la ubicación de las fichas
-        ubicacionY = 0.45;  
-        posIndice = posSalida;
+        // empezamos por la derecha a partir de la salida. Inicio de la ubicación de las fichas
+        ubicacionX = 0.48; ubicacionY = 0.45; posIndice = posSalida;
 
-        //  empezamos por pintar las fichas de salida (inclusive) hacia la derecha
+        //  pintamos las fichas desde la de salida (inclusive) hacia la derecha
         resultado = pintaFichasDerecha(fichasSerpiente, posIndice, ubicacionX, ubicacionY, 
             fontRelativo, false);
-        posIndice = resultado[0];
-        ubicacionX = resultado[1];
+        posIndice = resultado[0]; ubicacionX = resultado[1];
 
         // pintamos la 1ª ficha que sube a la derecha
-       if (posIndice < fichasSerpiente.length) {  //  aún queda una o más fichas 
-            laFicha = giraFicha(fichasSerpiente[posIndice]);
-            if (laFicha[0] === laFicha[2]) {   // es un doble
-                ubicacionX -= .7*fontRelativo;
-                ubicacionY -= 1.1*fontRelativo/ratio;
-                fichaVisual = hallaStringFicha(laFicha, "h");
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY -= .16*fontRelativo/ratio;
-            }  // cierra el if de laFicha[0]
-            else {   // es una mixta
-                posicion = "v"; 
-                ubicacionY -= .5*fontRelativo/ratio;
-                ubicacionX -= .21*fontRelativo;
-                fichaVisual = hallaStringFicha(laFicha, "v");
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY -= .7*fontRelativo/ratio;
-            }   // cierra el else
-            posIndice += 1;
-        }   // cierre del if posIndice de 1ª ficha que sube a la derecha
+        if (posIndice < fichasSerpiente.length) {  //  quedan fichas 
+            // si la 1ª de la derecha a izquierda es un doble hay que ajustar x, y
+            if (fichasSerpiente[posIndice-1][0] === fichasSerpiente[posIndice-1][2]) {
+                ubicacionX += 0.45*fontRelativo;
+                ubicacionY += 1.1*fontRelativo/ratio;
+            }    // cierra el if de fichaSerpiente
+            resultado = pintaFichaSubeBaja(posIndice, fichasSerpiente, ubicacionX, ubicacionY,  
+            fontRelativo, ratio, -.7, -1.1, -.16, -1.6, -.68, -.7, 0.0);
+            posIndice = resultado[0]; ubicacionX = resultado[1]; ubicacionY = resultado[2];
+        }   //  cierre del if posIndice
 
         //   pintamos la 2ª ficha que sube a la derecha
-        if (posIndice < fichasSerpiente.length) {  //  aún queda una o más fichas   
-            laFicha = giraFicha(fichasSerpiente[posIndice]);
-            if (laFicha[0] === laFicha[2]) {   // es un doble
-                ubicacionX -= .0*fontRelativo;
-                ubicacionY -= .9*fontRelativo/ratio;
-                fichaVisual = hallaStringFicha(laFicha, "h");
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY -= 1.07*fontRelativo/ratio;
-            }  // cierra el if de laFicha[0]
-            else {   // es una mixta
-                posicion = "v"; 
-                ubicacionY -= 1.4*fontRelativo/ratio;
-                ubicacionX += .00*fontRelativo;
-                fichaVisual = hallaStringFicha(laFicha, "v");
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY -= 1.59*fontRelativo/ratio;
-            }   // cierra el else
-            ubicacionX += 0.0525*30*fontRelativo;
-            posIndice += 1;
-        }   // cierre del if posIndice
+        resultado = pintaFichaSubeBaja(posIndice, fichasSerpiente, ubicacionX, ubicacionY, 
+            fontRelativo, ratio, 0.0, -.9, -1.07, -1.4, .0, -1.59, 1.575);
+        posIndice = resultado[0]; ubicacionX = resultado[1]; ubicacionY = resultado[2];
 
+        //  pintamos las fichas que van de arriba derecha hacia la izquierda
         if (posIndice < fichasSerpiente.length) {  //  quedan fichas de extremo izda a dcha
             // si la 1ª de la derecha a izquierda es un doble hay que ajustar x, y
             if (fichasSerpiente[posIndice][0] === fichasSerpiente[posIndice][2]) {
@@ -111,63 +83,37 @@
         }   //  cierre del if posIndice
 
         // para las fichas a la izquierda permutaremos la serpiente
-        serpIzquierda = fichasSerpiente.reverse();
-        posSalida = fichasSerpiente.indexOf(salida);
+        serpIzquierda = fichasSerpiente.reverse(); posSalida = fichasSerpiente.indexOf(salida);
 
-        // empezamos por la izquierda a partir de la salida
+        // empezamos por la izquierda a partir de la salida; primero ubicamos X e Y
         if (serpIzquierda[posSalida][0] === serpIzquierda[posSalida][2])   // inicio de la ubicación de las fichas
             ubicacionX = .481 + 0.88*fontRelativo;
         else 
             ubicacionX = .481 + 0.9*fontRelativo;
         ubicacionY = 0.45;  
 
+        //  y ahora pintamos de salida hacia izquierda
         posIndice = posSalida + 1;
         resultado = pintaFichasIzquierda(serpIzquierda, posIndice, ubicacionX, ubicacionY, fontRelativo, false);
-        posIndice = resultado[0];
-        ubicacionX = resultado[1];  
-        
+        posIndice = resultado[0]; ubicacionX = resultado[1]; 
+
         // pintamos la 1ª ficha que baja a la izquierda
-       if (posIndice < serpIzquierda.length) {  //  aún queda una o más fichas 
-            laFicha = giraFicha(serpIzquierda[posIndice]);
-            if (laFicha[0] === laFicha[2]) {   // es un doble
-                ubicacionX -= 1.15*fontRelativo;
-                ubicacionY += 1.1*fontRelativo/ratio;
-                fichaVisual = hallaStringFicha(laFicha, "h");
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY += .16*fontRelativo/ratio;
-            }  // cierra el if de laFicha[0]
-            else {   // es una mixta
-                posicion = "v"; 
-                ubicacionY += 1.61*fontRelativo/ratio;
-                ubicacionX -= 1.12*fontRelativo;
-                fichaVisual = hallaStringFicha(laFicha, "v");
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY += .7*fontRelativo/ratio;
-            }   // cierra el else
-            posIndice += 1;
-        }   // cierre del if posIndice de 1ª ficha que sube a la derecha
+        if (posIndice < serpIzquierda.length) {  //  quedan fichas 
+            // si la 1ª de la izquierda a derecha es un doble hay que ajustar x, y
+            if (fichasSerpiente[posIndice-1][0] === fichasSerpiente[posIndice-1][2]) {
+                ubicacionX -= 0.47*fontRelativo;
+                ubicacionY -= 1.1*fontRelativo/ratio;
+            }    // cierra el if de fichaSerpiente
+            resultado = pintaFichaSubeBaja(posIndice, fichasSerpiente, ubicacionX, ubicacionY,  
+            // fontRelativo, ratio, -.7, -1.1, -.16, -1.6, -.68, -.7, 0.0);
+            fontRelativo, ratio, -1.1, 1.13, .16, 1.6, -1.12, .7, 0.0);
+            posIndice = resultado[0]; ubicacionX = resultado[1]; ubicacionY = resultado[2];
+        }   //  cierre del if posIndice
 
         //   pintamos la 2ª ficha que baja a la izquierda
-        if (posIndice < serpIzquierda.length) {  //  aún queda una o más fichas   
-            laFicha = giraFicha(serpIzquierda[posIndice]);
-            if (laFicha[0] === laFicha[2]) {   // es un doble
-                ubicacionX -= .0*fontRelativo;
-                ubicacionY += .9*fontRelativo/ratio;
-                fichaVisual = hallaStringFicha(laFicha, "h");
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY += 1.07*fontRelativo/ratio;
-            }  // cierra el if de laFicha[0]
-            else {   // es una mixta
-                posicion = "v"; 
-                ubicacionY += 1.4*fontRelativo/ratio;
-                ubicacionX -= .00*fontRelativo;
-                fichaVisual = hallaStringFicha(laFicha, "v");
-                colocaString(fichaVisual, fontRelativo, ubicacionX, ubicacionY);
-                ubicacionY += 1.59*fontRelativo/ratio;
-            }   // cierra el else
-            ubicacionX += .24*fontRelativo;
-            posIndice += 1;
-        }   // cierre del if posIndice
+        resultado = pintaFichaSubeBaja(posIndice, serpIzquierda, ubicacionX, ubicacionY, 
+            fontRelativo, ratio, 0.0, .9, 1.07, 1.4, 0.0, 1.59, 0.24);
+        posIndice = resultado[0]; ubicacionX = resultado[1]; ubicacionY = resultado[2];
 
         //  ahora pintamos el resto de fichas, de izquierda a derecha
         if (posIndice < serpIzquierda.length) {  //  quedan fichas de extremo izquierda a derecha
@@ -178,11 +124,11 @@
             }    // cierra el if de fichaSerpiente
             pintaFichasDerecha(serpIzquierda, posIndice, ubicacionX, ubicacionY, fontRelativo, true);
         }   //  cierre del if posIndice
-
+/*
         document.getElementById("fila1").innerHTML = serpIzquierda[posSalida];
         document.getElementById("fila2").innerHTML = alturaPantalla;
         document.getElementById("fila3").innerHTML = fontRelativo;
-
+*/
     }   // cierra la funcion pintaLaPantalla
 
     // este sería el conjunto de inputs
@@ -192,8 +138,7 @@
     fichasOeste = ["0/4", "4/0", "0/2", "0/6", "4/1"];
     fichasSerpiente = ["1/2", "2/3", "3/3", "3/4", "4/4", "4/5", "5/5", "5/6", "6/2", "2/5", "5/5", "5/4", 
     "4/3", "3/2", "2/2", "2/1", "1/4", "4/3", "3/2", "2/6", 
-    "6/6", "6/2", "2/5", "5/5", "5/4", "4/0", "0/3", "3/1", 
-    "1/2", "2/5", "5/1", "1/3", "3/3", "3/4", "4/5"];
+    "6/6", "6/2", "2/5", "5/5", "5/4"];
     salida = "3/2";
     salidor = "norte";
 
@@ -215,7 +160,7 @@
         }); 
     // lanzará el dato de front a back 
 
-    document.getElementById("fila1").innerHTML = "hola";
+    // document.getElementById("fila1").innerHTML = "hola";
 
     window.onresize = function(){ 
         window.location.reload(true); 
