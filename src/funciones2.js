@@ -1,4 +1,4 @@
-// funciones de javascript que pintan la pantalla
+// funciones de javascript que pintan la pantalla junto con el otro fichero
 
 function pintaFichaSubeBaja(posIndice, fichasSerpiente, ubicacionX, ubicacionY, fontRelativo, ratio,
         para1, para2, para3, para4, para5, para6, para7) {
