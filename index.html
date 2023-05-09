@@ -150,22 +150,48 @@
     pintaLaPantalla(fichasNorte, fichasSur, fichasEste, fichasOeste, fichasSerpiente, 
         salida, fontRelativo);
 
-    // fetch("http://127.0.0.1:5000/members").then(res=>res.json()).then(data=>console.log(data));
-    var norteIn = [];
-    fetch("http://127.0.0.1:5000/members").then(res=>res.json()).then(data=>norteIn.push(data));
-    // el fetch, si no ponemos nada como 2º argumento, es un get que recoge del back
-    // console.log(fichasNorte);
+    /*
+    - continuamente el front va buscando lo que el back ha posteado
+    - si lo que ha posteado el back es igual al que había ya, no hace nada 
+        - pero espera acción del usuario
+        - y con acción del usuario envía la misma al back
+    - si el back no es igual al anterior, pinta la pantalla
+    - y actuliza la última versión del back para comparar
+    */
+    
 
-  
+    // fetch("http://127.0.0.1:5000/members").then(res=>res.json()).then(data=>console.log(data));
+    var entradas;  // aqui "bautizo" el objeto de entrada del back como "entradas"
+    fetch("http://127.0.0.1:5000/members").then(res=>res.json()).then(data=>{
+        entradas = data    
+        document.getElementById("fila1").innerHTML = "norte " + 
+            entradas.norte[0] + " " + entradas.norte[1] + " " + entradas.norte[2] + " " + " sur " +
+            entradas.sur[0] + " " + entradas.sur[1] + " " + entradas.sur[2];
+    });
+    // el fetch, si no ponemos nada como 2º argumento, es un get que recoge del back
+    console.log(entradas);
+
     // lo que envía al back: [ fichaTirada, por quien, puerta ] 
     fetch("http://127.0.0.1:5000/members", {
         method: "POST",
-        body: JSON.stringify({"frontIn": ["2/3", "este", "izquierda"]}),
+        body: JSON.stringify({"frontIn": ["2/3", "norte", "izquierda"]}),
         headers: {"Content-type": "application/json; charset=UTF-8"}
-        }); 
-    // lanzará el dato de front a back 
+        }).then(res=>res.json()).then(data=>{console.log(data)
+    });  
+    // esto anterior lanza el dato de front a back 
 
-    // document.getElementById("fila1").innerHTML = "hola";
+    // vendría ahora la 2ª iteración del bucle (1 por jugada, meter en bucle)
+    fetch("http://127.0.0.1:5000/members").then(res=>res.json()).then(data=>{
+        entradas = data    
+        document.getElementById("fila2").innerHTML = "norte " + 
+            entradas.norte[0] + " " + entradas.norte[1] + " " + " " + " sur " +
+            entradas.sur[0] + " " + entradas.sur[1] + " " + entradas.sur[2];
+    });
+    // el fetch, si no ponemos nada como 2º argumento, es un get que recoge del back
+    console.log(entradas);
+
+
+    // document.getElementById("fila1").innerHTML = "hola tu " + norteIn[0];
 
     window.onresize = function(){ 
         window.location.reload(true); 

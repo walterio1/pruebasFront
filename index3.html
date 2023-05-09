@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="styles.css">
+<html>
+    <body>
+        <h2 id="fila2"></h2>
+        <h2 id="fila3"></h2>
+
+
+        
+        <img Id = 'container4' src="file:///C:/woka/imagenes/0-0/0-0-v.jpg">
+       
+
+    </body>
+</html>
+
+<script src="src/funciones1.js"></script>
+<script src="src/funciones2.js"></script>
+
+<script>
+
+    function colocaImagen(miFicha, izquierda, arriba, dimFicha) {
+        var span = document.createElement('img');
+        span.src="file:///C:/woka/imagenes/0-0/0-0-h.jpg";
+        span.style.height = dimFicha + "px";
+        span.style.width = 2*dimFicha + "px";
+        span.style.position = 'absolute';
+        span.style.left = izquierda*dimFicha + "px";
+        span.style.top = arriba*dimFicha + "px";
+        span.innerHTML = miFicha;  //Asignar valor
+        span.style.transform = 'rotate(0deg)';
+        document.body.insertBefore(span, document.body.firstChild);
+    }  // cierra la función colocaString
+
+
+    let alturaPantalla = window.innerHeight;  // normal es 722
+    let anchuraPantalla = window.innerWidth;  // normal es 1536
+    var dimFicha = .025*Math.sqrt(anchuraPantalla*alturaPantalla);
+
+    var misFichas = [ "1/0", "0/0" ];
+    var miFicha = "1/0";    
+    // de momento suponemos horizontalidad hacia la derecha
+
+    colocaImagen(miFicha, 12, 4, dimFicha)
+
+    
+    let img = document.createElement("img");
+    n1 = Number(miFicha.substr(0, 1)); n2 = Number(miFicha.substr(2, 1));
+    if (n1 < n2) img.src = "file:///C:/woka/imagenes/" + n1 + "" + n2 + ".jpg";
+    else img.src = "file:///C:/woka/imagenes/" + n2 + "" + n1 + ".jpg";
+    img.id = 'container1';
+    document.body.appendChild(img);
+
+    var el = document.getElementById("container1");
+    el.style.height = dimFicha + "px";
+    el.style.width = 2*dimFicha + "px";
+    el.style.position = "absolute";
+    el.style.top = 4*dimFicha + "px";
+    el.style.left = 8*dimFicha + "px";
+    el.style.transform = 'rotate(0deg)';
+
+    var el = document.getElementById("container4");
+    el.style.height = 2*dimFicha + "px";
+    el.style.width = dimFicha + "px";
+    el.style.position = "absolute";
+    el.style.top = 4*dimFicha + "px";
+    el.style.left = 10*dimFicha + "px";
+    
+
+
+    document.getElementById("fila2").innerHTML = alturaPantalla;
+    document.getElementById("fila3").innerHTML = anchuraPantalla;
+    
+    window.onresize = function(){ 
+        window.location.reload(true); 
+    }
+
+/*
+    // esto sería para hacerlos proporcionales pero no queda bien la imagen
+    var alturaFicha = 1536/722/2*.05*alturaPantalla;
+    var anchuraFicha = .05*anchuraPantalla;
+    
+    var el = document.getElementById("container1");
+    el.style.height = alturaFicha + "px";
+    el.style.width = anchuraFicha + "px";
+    el.style.position = "absolute";
+    el.style.top = 3*alturaFicha + "px";
+    el.style.left = 2*anchuraFicha + "px";
+
+    var el = document.getElementById("container2");
+    el.style.height = 2*alturaFicha + "px";
+    el.style.width = .5*anchuraFicha + "px";
+    el.style.position = "absolute";
+    el.style.top = 3.0*alturaFicha + "px";
+    el.style.left = 3*anchuraFicha + "px";
+*/
+
+</script>
