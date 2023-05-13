@@ -4,70 +4,158 @@
 <html>
     <body>
         <h2 id="fila2"></h2>
-        <h2 id="fila3"></h2>
-
-
+        <h2 id="fila3"></h2>        
         
-        <img Id = 'container4' src="file:///C:/woka/imagenes/0-0/0-0-v.jpg">
-       
-
     </body>
 </html>
 
 <script src="src/funciones1.js"></script>
 <script src="src/funciones2.js"></script>
 
+
+
 <script>
 
-    function colocaImagen(miFicha, izquierda, arriba, dimFicha) {
+    function giraFicha(fichaIn) {
+        // devuelve la ficha girada
+        return fichaIn.substr(2, 1) + "/" + fichaIn.substr(0, 1);
+
+    }    //  cierra la function giraFicha
+
+    function colocaImagen(miFicha, izquierda, arriba, dimFicha, orientacion) {
+        // coloca la imagen de la ficha seleccionada en la ubicación (x,y) = (izquierda, arriba).
+        // se trata de una ficha de dimensión dimFicha
+        // va orientada vertical "v" u horizontal "h"
         var span = document.createElement('img');
-        span.src="file:///C:/woka/imagenes/0-0/0-0-h.jpg";
+        n1 = Number(miFicha.substr(0, 1)); n2 = Number(miFicha.substr(2, 1));
+        
+        if (n1 < n2) {
+            var rota = 0;
+            var texto = "" + n1 + "" + n2;
+        }   // cierre del if
+        else { 
+            var rota = 180;
+            var texto = "" + n2 + "" + n1;
+        }   // cierre del else
+        
+        if (orientacion === "v") rota += 90;
+        
+        span.src="imagenes/" + texto + ".jpg";
         span.style.height = dimFicha + "px";
         span.style.width = 2*dimFicha + "px";
         span.style.position = 'absolute';
         span.style.left = izquierda*dimFicha + "px";
         span.style.top = arriba*dimFicha + "px";
         span.innerHTML = miFicha;  //Asignar valor
-        span.style.transform = 'rotate(0deg)';
+        span.style.transform = "rotate(" + rota + "deg)";
         document.body.insertBefore(span, document.body.firstChild);
-    }  // cierra la función colocaString
+    }  // cierra la función colocaImagen
+
+    function colocaFicha (estaFicha, distanciaH, distanciaV, dimFicha, direccion) {
+        // colocará la ficha según sea la dirección: "alEste", "alNorte", "alOeste", "alSur"
+        n1 = Number(estaFicha.substr(0, 1)); n2 = Number(estaFicha.substr(2, 1));
+        condEste = (direccion === "alEste"); condOeste = (direccion === "alOeste");
+        condNorte = (direccion === "alNorte"); condSur = (direccion === "alSur");
+        if (n1 === n2)  { // la ficha es un doble
+            var previo = -.5; var posterior = 1.5;   // añadidos previo y post a colocar ficha
+            // los signos son OK yendo al este o al sur, cambian al oeste o al norte
+            if (condEste || condOeste) var orientacion = "v";  // dirección horizontal - doble vertical 
+            else var orientacion = "h";  // dirección vertical - doble horizontal
+        }  // cierre del if n1 n2
+        else  {  // la ficha es una mixta
+            var previo = 0; var posterior = 2;   
+            if (condEste || condOeste) var orientacion = "h";  // dirección horizontal - mixta horizontal 
+            else var orientacion = "v";
+        }
+        if (condOeste || condNorte) { previo *= -1; posterior *= -1 }
+        if (condEste || condOeste) distanciaH += previo;
+        else distanciaV += previo;
+        if (condOeste || condNorte) estaFicha = giraFicha(estaFicha);  // girarla
+        colocaImagen(estaFicha, distanciaH, distanciaV, dimFicha, orientacion);
+        if (condEste || condOeste) distanciaH += posterior;
+        else distanciaV += posterior;
+        return [distanciaH, distanciaV];   // hay que usarlos a continuación
+    }   // cierra la función colocaFicha
 
 
     let alturaPantalla = window.innerHeight;  // normal es 722
     let anchuraPantalla = window.innerWidth;  // normal es 1536
-    var dimFicha = .025*Math.sqrt(anchuraPantalla*alturaPantalla);
+    var coeficiente = .03;
+    var dimFicha = coeficiente*Math.sqrt(anchuraPantalla*alturaPantalla);   // lado ficha en px
+    var distFichaH = coeficiente*anchuraPantalla;    // anchura entre fichas
+    var distaFichaV = coeficiente*alturaPantalla;    // altura entre fichas
 
-    var misFichas = [ "1/0", "0/0" ];
-    var miFicha = "1/0";    
+    var serpiente = [ "1/2", "2/4", "4/4", "4/0", "0/5", "5/1", "1/0", "0/2", "2/1", "1/5", "5/5", "5/4", "4/0", "0/0", "0/3", "3/5",
+        "5/5", "5/6", "6/2", "2/2", "2/3", "3/3", "3/6", "6/4", "4/4", "4/5",
+        "5/6", "6/2", "2/2", "2/3", "3/3", "3/6", "6/4", "4/4", "4/5",
+        "5/6", "6/2", "2/2", "2/3", "3/3", "3/6", "6/4", "4/4", "4/5"];
+    var salida = "0/5";
+    var salidor = "norte";
+    var posSalida = serpiente.indexOf(salida);
+    var misFichas = serpiente.slice(posSalida, serpiente.length);
+
     // de momento suponemos horizontalidad hacia la derecha
 
-    colocaImagen(miFicha, 12, 4, dimFicha)
-
+    // de izquierda a derecha
+    var distanciaV = alturaPantalla/2/dimFicha;   // son en número de dimFicha
+    var distanciaH = anchuraPantalla/2/dimFicha;
     
-    let img = document.createElement("img");
-    n1 = Number(miFicha.substr(0, 1)); n2 = Number(miFicha.substr(2, 1));
-    if (n1 < n2) img.src = "file:///C:/woka/imagenes/" + n1 + "" + n2 + ".jpg";
-    else img.src = "file:///C:/woka/imagenes/" + n2 + "" + n1 + ".jpg";
-    img.id = 'container1';
-    document.body.appendChild(img);
-
-    var el = document.getElementById("container1");
-    el.style.height = dimFicha + "px";
-    el.style.width = 2*dimFicha + "px";
-    el.style.position = "absolute";
-    el.style.top = 4*dimFicha + "px";
-    el.style.left = 8*dimFicha + "px";
-    el.style.transform = 'rotate(0deg)';
-
-    var el = document.getElementById("container4");
-    el.style.height = 2*dimFicha + "px";
-    el.style.width = dimFicha + "px";
-    el.style.position = "absolute";
-    el.style.top = 4*dimFicha + "px";
-    el.style.left = 10*dimFicha + "px";
+    let limiteDerecha = (.85 - 1*coeficiente)*anchuraPantalla;
+    let limiteIzquierda = (.15 - 0*coeficiente)*anchuraPantalla;
+    let limiteArriba = (.2 + 1*coeficiente)*alturaPantalla;
+    let limiteAbajo = (.8 - 1*coeficiente)*alturaPantalla;
     
+    if (salidor === "oeste") var direccion = "alEste";
+    else if (salidor === "sur") var direccion = "alNorte";
+    else if (salidor === "este") var direccion = "alOeste";
+    else if (salidor === "norte") var direccion = "alSur";
+    let aa = 0;
+    do {
+        salida = colocaFicha (misFichas[aa], distanciaH, distanciaV, dimFicha, direccion);
+        distanciaH = salida[0]; distanciaV = salida[1];
+        if ((distanciaH*dimFicha > limiteDerecha) && (direccion === "alEste")) { 
+            direccion = "alNorte"; distanciaH -= 1.5; distanciaV -= 1.5; 
+            if(misFichas[aa][0] === misFichas[aa][2]) { distanciaH += 1; distanciaV += 1; }
+        }   // cierre de if distanciaH direccion alEste
+        else if ((distanciaV*dimFicha < limiteArriba) && (direccion === "alNorte")) { 
+            direccion = "alOeste"; distanciaH -= 1.5; distanciaV += 1.5; 
+            if(misFichas[aa][0] === misFichas[aa][2]) { distanciaH += 1; distanciaV -= 1}
+        }   // cierre de if distanciaH direccion alEste
+        else if ((distanciaH*dimFicha < limiteIzquierda) && (direccion === "alOeste")) { 
+            direccion = "alSur"; distanciaH += 1.5; distanciaV += 1.5; 
+            if(misFichas[aa][0] === misFichas[aa][2]) { distanciaH -= 1; distanciaV -= 1}
+        }   // cierre de if distanciaH direccion alOeste
+        else if ((distanciaV*dimFicha > limiteAbajo) && (direccion === "alSur")) { 
+            direccion = "alEste"; distanciaH += 1.5; distanciaV -= 1.5; 
+            if(misFichas[aa][0] === misFichas[aa][2]) { distanciaH -= 1; distanciaV += 1}
+        }   // cierre de if distanciaH direccion alOeste
+    }   while(++aa < misFichas.length);
 
+    /*
+    for ( ii = 0; ii < 4; ii++) {
+        salida = colocaFicha (misFichas[ii], distanciaH, distanciaV, dimFicha, "alNorte");
+        distanciaH = salida[0]; distanciaV = salida[1];
+    }   // cierra el for ii
 
+    distanciaH -= .5;
+    distanciaV += .5;
+    
+    for ( var ii = 0; ii < misFichas.length; ii++) {
+        salida = colocaFicha (misFichas[ii], distanciaH, distanciaV, dimFicha, "alOeste");
+        distanciaH = salida[0]; distanciaV = salida[1];
+    }   // cierra el for ii
+
+    distanciaH += .5;
+    distanciaV += .5;
+
+    for ( var ii = 0; ii < misFichas.length; ii++) {
+        salida = colocaFicha (misFichas[ii], distanciaH, distanciaV, dimFicha, "alSur");
+        distanciaH = salida[0]; distanciaV = salida[1];
+    }   // cierra el for ii
+
+    distanciaH += .5;
+    distanciaV -= .5;
+    */
     document.getElementById("fila2").innerHTML = alturaPantalla;
     document.getElementById("fila3").innerHTML = anchuraPantalla;
     
