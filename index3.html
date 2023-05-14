@@ -81,11 +81,12 @@
         limiteDerecha, limiteIzquierda, limiteArriba, limiteAbajo) {
         //  pinta la mitad de la serpiente girando en contra de las agujas del reloj    
         let aa = 0;
-        var distanciaV = alturaPantalla/2/dimFicha;   // son en número de dimFicha
-        var distanciaH = anchuraPantalla/2/dimFicha;
+        let distanciaH = anchuraPantalla/2/dimFicha;
+        let distanciaV = alturaPantalla/2/dimFicha;   // son en número de dimFicha
         do {
-            salida = colocaFicha (misFichas[aa], distanciaH, distanciaV, dimFicha, direccion);
-            distanciaH = salida[0]; distanciaV = salida[1];
+            if (aa===0) console.log(distanciaH, distanciaV)
+            salidaR = colocaFicha (misFichas[aa], distanciaH, distanciaV, dimFicha, direccion);
+            distanciaH = salidaR[0]; distanciaV = salidaR[1];
             if ((distanciaH*dimFicha > limiteDerecha) && (direccion === "alEste")) { 
                 direccion = "alNorte"; distanciaH -= 1.5; distanciaV -= 1.5; 
                 if(misFichas[aa][0] === misFichas[aa][2]) { distanciaH += 1; distanciaV += 1; }
@@ -103,6 +104,7 @@
                 if(misFichas[aa][0] === misFichas[aa][2]) { distanciaH -= 1; distanciaV += 1}
             }   // cierre de if distanciaH direccion alOeste
         }   while(++aa < misFichas.length);
+        document.getElementById("fila2").innerHTML = limiteArriba;
     }    //   cierre de function pintaMediaSerpiente
 
     let alturaPantalla = window.innerHeight;  
@@ -112,14 +114,19 @@
     var distFichaH = coeficiente*anchuraPantalla;    // anchura entre fichas
     var distaFichaV = coeficiente*alturaPantalla;    // altura entre fichas
 
-    var serpiente = [ "1/2", "2/4", "4/4", "4/0", "0/5", "5/1", "1/0", "0/2", "2/1", "1/5", "5/5", "5/4", "4/0", "0/0", "0/3", "3/5",
+    var serpiente = [ "1/2", "2/4", "4/4", "4/0", "0/5", "5/1", "1/0", "0/2", 
+        "2/1", "1/5", "5/5", "5/4", "4/0", "0/0", "0/3", "3/5",
         "5/5", "5/6", "6/2", "2/2", "2/3", "3/3", "3/6", "6/4", "4/4", "4/5",
-        "5/6", "6/2", "2/2", "2/3", "3/3", "3/6", "6/4", "4/4", "4/5",
-        "5/6", "6/2", "2/2", "2/3", "3/3", "3/6", "6/4", "4/4", "4/5"];
-    var salida = "0/5";
-    var salidor = "norte";
+        "5/2", "2/2", "2/3", "3/6", "6/4", "4/4", "4/5",
+        "5/2", "2/2", "2/3", "3/6", "6/4", "4/4", "4/5"];
+
+   // var serpiente = ["5/5", "5/6", "6/2", "2/2", "2/3", "3/3", "3/6", "6/4", "4/4", "4/5"];
+
+    var salida = "3/3";
+    var salidor = "sur";
     var posSalida = serpiente.indexOf(salida);
     var misFichas = serpiente.slice(posSalida, serpiente.length);
+    console.log(misFichas);
 
     let limiteDerecha = (.85 - 1*coeficiente)*anchuraPantalla;
     let limiteIzquierda = (.15 - 0*coeficiente)*anchuraPantalla;
@@ -131,10 +138,31 @@
     else if (salidor === "este") var direccion = "alOeste";
     else if (salidor === "norte") var direccion = "alSur";
 
-    pintaMediaSerpiente(alturaPantalla, anchuraPantalla, misFichas, dimFicha, direccion, 
-        limiteDerecha, limiteIzquierda, limiteArriba, limiteAbajo);
+    // pinta la mitad de serpiente desde salida a la derecha
+    pintaMediaSerpiente(alturaPantalla, anchuraPantalla, misFichas, dimFicha, direccion, limiteDerecha, limiteIzquierda, limiteArriba, limiteAbajo);
+    // ahora la mitad a la izquierda para lo cual la invertimos
+    if (salidor === "oeste") direccion = "alOeste";
+    else if (salidor === "sur") direccion = "alSur";
+    else if (salidor === "este") direccion = "alEste";
+    else if (salidor === "norte") direccion = "alNorte";
+    // limiteArriba = (.2 + 5*coeficiente)*alturaPantalla;
+    // limiteAbajo = (.8 - 5*coeficiente)*alturaPantalla;
     
-    document.getElementById("fila2").innerHTML = alturaPantalla;
+    serpIzquierda = serpiente.reverse(); 
+    posSalida = serpIzquierda.indexOf(salida);
+    console.log(salida, posSalida);
+    misFichas = serpIzquierda.slice(posSalida, serpIzquierda.length);
+    console.log(misFichas);
+    for (ii = 0; ii < misFichas.length; ii++) misFichas[ii] = giraFicha(misFichas[ii]);
+    if (misFichas[0][0] === misFichas[0][2]) {
+        if (direccion === "alOeste") anchuraPantalla -= 2*dimFicha; 
+        else if (direccion === "alEste") anchuraPantalla += 2*dimFicha; 
+        else if (direccion === "alNorte") alturaPantalla -= 2*dimFicha; 
+        else if (direccion === "alSur") alturaPantalla += 2*dimFicha;  
+    }   // cierre de if misFichas
+    pintaMediaSerpiente(alturaPantalla, anchuraPantalla, misFichas, dimFicha, direccion, limiteDerecha, limiteIzquierda, limiteArriba, limiteAbajo);
+    
+    
     document.getElementById("fila3").innerHTML = anchuraPantalla;
     
     window.onresize = function(){ 
